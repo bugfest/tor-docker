@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION="3.15"
 FROM alpine:$ALPINE_VERSION as tor-builder
 
-ARG TOR_VERSION="0.4.6.9"
+ARG TOR_VERSION="0.4.6.10"
 RUN apk update
 RUN apk add --no-cache git build-base automake autoconf make build-base openssl-dev libevent-dev zlib-dev
 
