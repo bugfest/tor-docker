@@ -1,0 +1,29 @@
+ARG TARGETOS TARGETARCH
+
+# Clone the obfs4 repo
+FROM --platform=$BUILDPLATFORM golang:1.17-alpine as git
+ARG OBFS_VERSION="obfs4proxy-0.0.14-tor2"
+
+RUN apk add git
+RUN git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
+
+# Build the obfs4 binary
+FROM --platform=$BUILDPLATFORM golang:1.17-alpine as builder
+
+# Build
+RUN mkdir /out
+WORKDIR /obfs
+RUN --mount=target=. \
+    --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg \
+    --mount=type=bind,from=git,source=/obfs,target=/obfs \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/obfs4proxy ./obfs4proxy
+
+# Use distroless as minimal base image to package the obfs binary
+# Refer to https://github.com/GoogleContainerTools/distroless for more details
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /
+COPY --from=builder /out/obfs4proxy .
+USER 65532:65532
+
+ENTRYPOINT ["/obfs4proxy"]
