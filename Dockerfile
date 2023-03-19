@@ -4,8 +4,7 @@ ARG ALPINE_VERSION="3.17"
 FROM --platform=$BUILDPLATFORM alpine:$ALPINE_VERSION as tor-builder
 
 ARG TOR_VERSION="0.4.7.13"
-RUN apk update
-RUN apk add --no-cache git build-base automake autoconf make build-base openssl-dev libevent-dev zlib-dev
+RUN apk add --update --no-cache git build-base automake autoconf make build-base openssl-dev libevent-dev zlib-dev
 
 # Install Tor from source
 RUN git clone https://gitlab.torproject.org/tpo/core/tor.git --depth 1 --branch tor-$TOR_VERSION /tor
@@ -38,9 +37,7 @@ RUN --mount=target=. \
 FROM --platform=$BUILDPLATFORM alpine:$ALPINE_VERSION as runner
 WORKDIR /root/
 
-RUN apk update
-RUN apk add --no-cache libevent \
-    && rm -rf /var/cache/apk/*
+RUN apk add --update --no-cache libevent
 
 # install tor
 RUN mkdir -p /usr/local/bin /usr/local/etc/tor /usr/local/share/tor
