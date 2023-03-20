@@ -17,13 +17,9 @@ RUN --mount=target=. \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     --mount=type=bind,from=git,source=/obfs,target=/obfs \
-    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/obfs4proxy ./obfs4proxy
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/obfs4proxy ./obfs4proxy
 
-# Use distroless as minimal base image to package the obfs binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
-WORKDIR /
-COPY --from=builder /out/obfs4proxy .
-USER 65532:65532
-
+FROM scratch
+USER nobody
+COPY --from=builder /out/obfs4proxy /
 ENTRYPOINT ["/obfs4proxy"]
