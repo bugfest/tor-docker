@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION="3.17"
 
 # Tor builder
-FROM --platform=$BUILDPLATFORM alpine:$ALPINE_VERSION as tor-builder
+FROM --platform=$TARGETPLATFORM alpine:$ALPINE_VERSION as tor-builder
 
 ARG TOR_VERSION="0.4.7.13"
 RUN apk add --update --no-cache git build-base automake autoconf make build-base openssl-dev libevent-dev zlib-dev
@@ -14,19 +14,20 @@ RUN ./configure --disable-asciidoc
 RUN make
 RUN make install
 
-# Clone the obfs4 repo
+# Clone the obfs4 repo (cross-compiling)
 FROM --platform=$BUILDPLATFORM golang:1.17-alpine as obfs-src
 ARG OBFS_VERSION="obfs4proxy-0.0.14-tor2"
 
 RUN apk add git
 RUN git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
 
-# Build the obfs4 binary
+# Build the obfs4 binary (cross-compiling)
 FROM --platform=$BUILDPLATFORM golang:1.17-alpine as obfs-builder
 
 # Build obfs
 RUN mkdir /out
 WORKDIR /obfs
+ARG TARGETOS TARGETARCH
 RUN --mount=target=. \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
@@ -34,7 +35,7 @@ RUN --mount=target=. \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/obfs4proxy ./obfs4proxy
 
 # Tor runner
-FROM --platform=$BUILDPLATFORM alpine:$ALPINE_VERSION as runner
+FROM --platform=$TARGETPLATFORM alpine:$ALPINE_VERSION as runner
 WORKDIR /root/
 
 RUN apk add --update --no-cache libevent
