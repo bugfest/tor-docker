@@ -1,25 +1,25 @@
 .PHONY: all
 all: build
 
+# Dockerfile.quick installs Tor using pre-built binaries
 .PHONY: quick
-build:
+quick:
 	docker buildx build \
 		--platform=linux/amd64,linux/arm,linux/arm64 \
-		--build-arg ALPINE_VERSION=3.17.3 \
-		--build-arg TOR_VERSION=0.4.7.13 \
-		--tag quay.io/bugfest/tor:0.4.7.13 \
+		--build-arg TOR_VERSION=0.4.8.7 \
+		--tag quay.io/bugfest/tor:0.4.8.7 \
 		--tag quay.io/bugfest/tor:latest \
 		--squash \
 		-f Dockerfile.quick \
 		.
 
+# Dockerfile builds Tor from source
 .PHONY: build
-build-alt:
+build:
 	docker buildx build \
 		--platform=linux/amd64,linux/arm,linux/arm64 \
-		--build-arg ALPINE_VERSION=3.17.3 \
-		--build-arg TOR_VERSION=0.4.7.13 \
-		--tag quay.io/bugfest/tor:0.4.7.13 \
+		--build-arg TOR_VERSION=0.4.8.7 \
+		--tag quay.io/bugfest/tor:0.4.8.7 \
 		--tag quay.io/bugfest/tor:latest \
 		--squash \
 		-f Dockerfile \

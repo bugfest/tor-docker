@@ -45,6 +45,8 @@ make
 
 Installs pre-built Tor from Alpine's repositories. Useful for testing/troubleshooting.
 
+WARNING: some Tor features might be missing, depending on the [Alpine community build setup](https://github.com/alpinelinux/aports/tree/master/community/tor)
+
 ```bash
 make quick
 ```

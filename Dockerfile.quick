@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION="3.17.3"
+ARG ALPINE_VERSION="3.18.4"
 
 # Build the obfs4 binary (cross-compiling)
 FROM --platform=$BUILDPLATFORM golang:1.20-alpine as obfs-builder
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 # Tor runner
 FROM --platform=$TARGETPLATFORM docker.io/library/alpine:$ALPINE_VERSION as runner
-ARG TOR_VERSION="0.4.7.13"
+ARG TOR_VERSION="0.4.8.7"
 
 LABEL \
       org.opencontainers.image.source "https://github.com/bugfest/tor-docker"
