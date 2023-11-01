@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION="3.17.3"
+ARG ALPINE_VERSION="3.18.4"
 
 # Tor builder
 FROM --platform=$TARGETPLATFORM docker.io/library/alpine:$ALPINE_VERSION as tor-builder
@@ -13,10 +13,14 @@ RUN apk add --update --no-cache \
 RUN git clone https://gitlab.torproject.org/tpo/core/tor.git --depth 1 --branch tor-$TOR_VERSION /tor
 WORKDIR /tor
 RUN ./autogen.sh
+
+# Notes:
+# - --enable-gpl is required to compile PoW anti-DoS: https://community.torproject.org/onion-services/advanced/dos/
 RUN ./configure \
     --disable-asciidoc \
     --disable-manpage \
-    --disable-html-manual
+    --disable-html-manual \
+    --enable-gpl
     # --enable-static-tor
 RUN make
 RUN make install
@@ -44,8 +48,11 @@ LABEL \
 
 WORKDIR /app
 
-RUN apk add --update --no-cache libevent && \
-    chmod -R g+w /app /run
+RUN apk add --update --no-cache \
+    libevent \
+    xz-libs \
+    zstd-libs \
+    && chmod -R g+w /app /run
 
 # install tor
 RUN mkdir -p /usr/local/bin /usr/local/etc/tor /usr/local/share/tor
