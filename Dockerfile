@@ -10,31 +10,32 @@ RUN apk add --update --no-cache \
     xz-dev zstd-dev
 
 # Install Tor from source
-RUN git clone https://gitlab.torproject.org/tpo/core/tor.git --depth 1 --branch tor-$TOR_VERSION /tor
 WORKDIR /tor
-RUN ./autogen.sh
+RUN git clone https://gitlab.torproject.org/tpo/core/tor.git --depth 1 --branch tor-"${TOR_VERSION}" /tor && \
+      ./autogen.sh
 
 # Notes:
 # - --enable-gpl is required to compile PoW anti-DoS: https://community.torproject.org/onion-services/advanced/dos/
+# --enable-static-tor
 RUN ./configure \
     --disable-asciidoc \
     --disable-manpage \
     --disable-html-manual \
-    --enable-gpl
-    # --enable-static-tor
-RUN make
-RUN make install
+    --enable-gpl && \
+      make && \
+      make install
 
 # Build the obfs4 binary (cross-compiling)
 FROM --platform=$BUILDPLATFORM golang:1.20-alpine as obfs-builder
 ARG OBFS_VERSION="obfs4proxy-0.0.14-tor2"
 
-RUN apk add --update --no-cache git
-RUN git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
+WORKDIR /obfs
+RUN apk add --update --no-cache git && \
+      git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
 
 # Build obfs
 RUN mkdir /out
-WORKDIR /obfs
+
 ARG TARGETOS TARGETARCH
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
