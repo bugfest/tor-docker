@@ -1,5 +1,4 @@
 ARG ALPINE_VERSION="3.18.4"
-ARG TOR_VERSION="0.4.8.7"
 
 # Build the obfs4 binary (cross-compiling)
 FROM --platform=$BUILDPLATFORM golang:1.20-alpine as obfs-builder
@@ -24,6 +23,7 @@ LABEL \
 
 WORKDIR /app
 
+ARG TOR_VERSION="0.4.8.7"
 RUN apk add --update --no-cache \
       tor=~"${TOR_VERSION}" && \
     chmod -R g+w /app /run

@@ -1,9 +1,9 @@
 ARG ALPINE_VERSION="3.18.4"
-ARG TOR_VERSION="0.4.8.7"
 
 # Tor builder
-FROM --platform=$TARGETPLATFORM docker.io/library/alpine:$ALPINE_VERSION as tor-builder
+FROM --platform=$TARGETPLATFORM docker.io/library/alpine:${ALPINE_VERSION} as tor-builder
 
+ARG TOR_VERSION="0.4.8.7"
 RUN apk add --update --no-cache \
     git build-base automake autoconf make \
     build-base openssl-dev libevent-dev zlib-dev \
@@ -42,7 +42,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/obfs4proxy ./obfs4proxy
 
 # Tor runner
-FROM --platform=$TARGETPLATFORM docker.io/library/alpine:$ALPINE_VERSION as runner
+FROM --platform=$TARGETPLATFORM docker.io/library/alpine:${ALPINE_VERSION} as runner
 
 LABEL \
       org.opencontainers.image.source "https://github.com/bugfest/tor-docker"
