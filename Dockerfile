@@ -48,6 +48,7 @@ LABEL \
       org.opencontainers.image.source "https://github.com/bugfest/tor-docker"
 
 WORKDIR /app
+ENV HOME=/app
 
 RUN apk add --update --no-cache \
       libevent \
