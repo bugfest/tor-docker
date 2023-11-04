@@ -73,6 +73,6 @@ COPY --from=obfs-builder /out/obfs4proxy /usr/local/bin/.
 USER 1001
 
 # create service dir
-VOLUME --perms=700 /run/tor/service
+VOLUME /run/tor/service
 
 ENTRYPOINT ["/usr/local/bin/tor"]
