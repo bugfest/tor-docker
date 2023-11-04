@@ -1,9 +1,9 @@
 ARG ALPINE_VERSION="3.18.4"
+ARG TOR_VERSION="0.4.8.7"
 
 # Tor builder
 FROM --platform=$TARGETPLATFORM docker.io/library/alpine:$ALPINE_VERSION as tor-builder
 
-ARG TOR_VERSION="0.4.8.7"
 RUN apk add --update --no-cache \
     git build-base automake autoconf make \
     build-base openssl-dev libevent-dev zlib-dev \
@@ -49,10 +49,10 @@ LABEL \
 WORKDIR /app
 
 RUN apk add --update --no-cache \
-    libevent \
-    xz-libs \
-    zstd-libs \
-    && chmod -R g+w /app /run
+      libevent \
+      xz-libs \
+      zstd-libs && \
+    chmod -R g+w /app /run
 
 # install tor
 RUN mkdir -p /usr/local/bin /usr/local/etc/tor /usr/local/share/tor
@@ -68,10 +68,10 @@ COPY --from=tor-builder /tor/src/config/geoip6 /usr/local/share/tor/.
 # install transports
 COPY --from=obfs-builder /out/obfs4proxy /usr/local/bin/.
 
-# create service dir
-RUN mkdir -p /run/tor/service && \
-    chmod -R g+w /run
-
+# change to non root
 USER 1001
+
+# create service dir
+VOLUME --perms=700 /run/tor/service
 
 ENTRYPOINT ["/usr/local/bin/tor"]
