@@ -38,4 +38,4 @@ USER 1001
 # create service dir
 VOLUME /run/tor/service
 
-ENTRYPOINT ["/usr/local/bin/tor"]
+ENTRYPOINT ["/usr/bin/tor"]
