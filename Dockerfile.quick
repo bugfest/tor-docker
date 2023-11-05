@@ -24,7 +24,7 @@ LABEL \
 WORKDIR /app
 ENV HOME=/app
 
-ARG TOR_VERSION="0.4.8.7"
+ARG TOR_VERSION="0.4.8.8"
 RUN apk add --update --no-cache \
       tor=~"${TOR_VERSION}" && \
     chmod -R g+w /app /run
