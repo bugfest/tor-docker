@@ -31,7 +31,7 @@ ARG OBFS_VERSION="obfs4proxy-0.0.14-tor2"
 
 WORKDIR /obfs
 RUN apk add --update --no-cache git && \
-      git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
+      git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird.git --depth 1 --branch "${OBFS_VERSION}" /obfs
 
 # Build obfs
 RUN mkdir /out
