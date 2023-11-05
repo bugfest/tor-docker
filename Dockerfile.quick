@@ -29,6 +29,9 @@ RUN apk add --update --no-cache \
       tor=~"${TOR_VERSION}" && \
     chmod -R g+w /app /run
 
+# fix hard coded path for controller
+RUN ln -s /usr/bin/tor /usr/local/bin/tor
+
 # install transports
 COPY --from=obfs-builder /out/obfs4proxy /usr/local/bin/.
 
@@ -38,4 +41,4 @@ USER 1001
 # create service dir
 VOLUME /run/tor/service
 
-ENTRYPOINT ["/usr/bin/tor"]
+ENTRYPOINT ["/usr/local/bin/tor"]
