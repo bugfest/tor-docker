@@ -16,7 +16,7 @@ jobs:
 
       - name: Set latest tag
         id: vars
-        run: echo ::set-output name=tag::latest
+        run: echo "tag=latest" >> ${GITHUB_OUTPUT}
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -27,17 +27,17 @@ jobs:
         id: prep
         run: |
           BUILD_DATE=$(date --rfc-3339=seconds --utc)
-          echo ::set-output name=build_date::${BUILD_DATE}
+          echo "build_date=${BUILD_DATE}" >> ${GITHUB_OUTPUT}
           PLATFORMS=amd64,arm,arm64
           TAGS1="quay.io/${{ github.repository_owner }}/tor:${{ steps.vars.outputs.tag }}"
           if [ "${{github.event_name}}" == "pull_request" ]; then
-                echo ::set-output name=push::false
+                echo "push=false" >> ${GITHUB_OUTPUT}
               else
-                echo ::set-output name=push::true
-                echo ::set-output name=tags1::${TAGS1}
-                echo ::set-output name=branch::${GIT_BRANCH}
+                echo "push=true" >> ${GITHUB_OUTPUT}
+                echo "tags1=${TAGS1}" >> ${GITHUB_OUTPUT}
+                echo "branch=${GIT_BRANCH}" >> ${GITHUB_OUTPUT}
           fi
-          echo ::set-output name=platforms::${PLATFORMS}
+          echo "platforms=${PLATFORMS}" >> ${GITHUB_OUTPUT}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

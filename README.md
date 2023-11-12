@@ -1,12 +1,12 @@
-<h1 align="center"><b>tor-docker</b></h1>
-
+# tor-docker
 
 [![Build multiarch image - latest](https://github.com/bugfest/tor-docker/actions/workflows/main.yml/badge.svg)](https://github.com/bugfest/tor-docker/actions/workflows/main.yml)
 [![Build multiarch image - tag](https://github.com/bugfest/tor-docker/actions/workflows/main-tag.yml/badge.svg)](https://github.com/bugfest/tor-docker/actions/workflows/main-tag.yml)
 
-`Tor` daemon (https://www.torproject.org/download/tor/) multiarch container.
+`Tor` daemon multiarch container.
 
 Additional transport plugins included in the image:
+
 - `obfs4proxy`
 
 Tested architectures:
@@ -16,18 +16,24 @@ Tested architectures:
 - `arm64`
 
 Source code:
+
 - https://gitlab.torproject.org/tpo/core/tor
-- https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4
+- https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird
+
+Downloads:
+
+- https://www.torproject.org/download/tor
 
 Used by:
+
 - [bugfest/tor-controller](https://github.com/bugfest/tor-controller)
 
-# Tor
+## Tor
 
 Tor is an anonymity network that provides:
 
 - privacy
-- enhanced tamperproofing
+- enhanced tamper proofing
 - freedom from network surveillance
 - NAT traversal
 
@@ -51,7 +57,7 @@ WARNING: some Tor features might be missing, depending on the [Alpine community 
 make quick
 ```
 
-# Usage
+## Usage
 
 ```shell
 docker pull quay.io/bugfest/tor

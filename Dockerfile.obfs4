@@ -1,27 +1,21 @@
-ARG TARGETOS TARGETARCH
-
-# Clone the obfs4 repo
-FROM --platform=$BUILDPLATFORM golang:1.17-alpine as git
+# Build the obfs4 binary (cross-compiling)
+FROM --platform=$BUILDPLATFORM golang:1.20-alpine as obfs-builder
 ARG OBFS_VERSION="obfs4proxy-0.0.14-tor2"
 
-RUN apk add git
-RUN git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/obfs4.git --depth 1 --branch $OBFS_VERSION /obfs
+RUN apk add --update --no-cache git && \
+      git clone https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/lyrebird.git --depth 1 --branch "${OBFS_VERSION}" /obfs
 
-# Build the obfs4 binary
-FROM --platform=$BUILDPLATFORM golang:1.17-alpine as builder
-RUN echo 'nobody:x:65534:65534:Nobody:/:' > /tmp/passwd
-
-# Build
+# Build obfs
 RUN mkdir /out
 WORKDIR /obfs
-RUN --mount=target=. \
-    --mount=type=cache,target=/root/.cache/go-build \
+ARG TARGETOS TARGETARCH
+RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
-    --mount=type=bind,from=git,source=/obfs,target=/obfs \
-    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/obfs4proxy ./obfs4proxy
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/obfs4proxy ./obfs4proxy && \
+      echo 'user:x:1001:1001:user:/:' > /tmp/passwd
 
 FROM scratch
-USER nobody
-COPY --from=builder /tmp/passwd /etc/passwd
-COPY --from=builder /out/obfs4proxy /
+USER 1001
+COPY --from=obfs-builder /tmp/passwd /etc/passwd
+COPY --from=obfs-builder /out/obfs4proxy /
 ENTRYPOINT ["/obfs4proxy"]
