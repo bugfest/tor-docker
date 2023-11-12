@@ -6,8 +6,8 @@ all: build
 quick:
 	docker buildx build \
 		--platform=linux/amd64,linux/arm,linux/arm64 \
-		--build-arg TOR_VERSION=0.4.8.8 \
-		--tag quay.io/bugfest/tor:0.4.8.8 \
+		--build-arg TOR_VERSION=0.4.8.9 \
+		--tag quay.io/bugfest/tor:0.4.8.9 \
 		--tag quay.io/bugfest/tor:latest \
 		--squash \
 		-f Dockerfile.quick \
@@ -18,8 +18,8 @@ quick:
 build:
 	docker buildx build \
 		--platform=linux/amd64,linux/arm,linux/arm64 \
-		--build-arg TOR_VERSION=0.4.8.8 \
-		--tag quay.io/bugfest/tor:0.4.8.8 \
+		--build-arg TOR_VERSION=0.4.8.9 \
+		--tag quay.io/bugfest/tor:0.4.8.9 \
 		--tag quay.io/bugfest/tor:latest \
 		--squash \
 		-f Dockerfile \
