@@ -70,10 +70,11 @@ COPY --from=tor-builder /tor/src/config/geoip6 /usr/local/share/tor/.
 # install transports
 COPY --from=obfs-builder /out/obfs4proxy /usr/local/bin/.
 
+# create service dir (we don't define VOLUME because https://github.com/docker-library/mysql/issues/255
+# and other issues when running as non-root user)
+RUN mkdir -p /run/tor/service && chown -R 1001 /run/tor
+
 # change to non root
 USER 1001
-
-# create service dir
-VOLUME /run/tor/service
 
 ENTRYPOINT ["/usr/local/bin/tor"]
